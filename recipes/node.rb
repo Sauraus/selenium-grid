@@ -7,16 +7,16 @@
 # All rights reserved - Do Not Redistribute
 #
 
-include_recipe 'selenium-grid::bats-handler'
 include_recipe 'java'
-include_recipe 'supervisor'
-include_recipe 'google-chrome'
-node.override['selenium-grid']['grid']['hub']['url'] = '192.168.10.10'
+include_recipe 'git'
+include_recipe 'php'
+
+node.override['selenium-grid']['grid']['hub']['url'] = '33.33.33.10'
 
 #
 # Install packages
 #
-%w(firefox x11vnc xorg unzip).each do |pkg|
+%w(firefox vnc-server).each do |pkg|
   package pkg do
     action :install
   end
@@ -62,7 +62,7 @@ end
 # config
 #
 template "#{node['selenium']['dir']}/#{node['selenium']['config']}.json" do
-  source "#{node['selenium']['config']}.erb"
+  source "config.json.erb"
   owner 'root'
   variables({
     :hub_url => node['grid']['hub']['url'],
@@ -70,31 +70,11 @@ template "#{node['selenium']['dir']}/#{node['selenium']['config']}.json" do
     })
 end
 
+include_recipe 'runit::default'
 
-#
-# Start required services
-#
-supervisor_service 'startx' do
-    command 'startx'
-    user 'root'
-    notifies :start, 'supervisor_service[x11vnc]'
-    action [ :enable, :start ]
-end
+runit_service 'selenium-node'
 
-supervisor_service 'x11vnc' do
-    command 'x11vnc -safer -httpdir /usr/share/vnc-java/ -httpport 5800'
-    user 'root'
-    notifies :start, 'supervisor_service[node]'
-    action [ :enable, :start ]
-end
-
-
-supervisor_service 'node' do
-    environment 'DISPLAY' => ':0'
-    user 'root'
-    command %W{
-    java -jar #{node['selenium']['dir']}/#{node['selenium']['jar']}
-      -role node -nodeConfig #{node['selenium']['dir']}/#{node['selenium']['config']}.json
-      -Dwebdriver.chrome.driver=#{node['selenium']['dir']}/#{node['chromedriver']['exe']}
-    }.join(' ')
+service 'selenium-node' do
+  supports       :status => true, :restart => true, :reload => true
+  reload_command "#{node['runit']['sv_bin']} hup #{node['runit']['service_dir']}/selenium-node"
 end

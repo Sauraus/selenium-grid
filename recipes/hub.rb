@@ -7,10 +7,8 @@
 # All rights reserved - Do Not Redistribute
 #
 
-#include_recipe 'selenium-grid::bats-handler'
 include_recipe 'java'
-include_recipe 'supervisor'
-
+include_recipe 'runit'
 
 #
 # Install Selenium server
@@ -31,11 +29,14 @@ remote_file "#{node['selenium']['dir']}/#{node['selenium']['jar']}" do
     action :create_if_missing
 end
 
-
 #
 # Start required services
 #
-supervisor_service 'hub' do
-    user 'root'
-    command "java -jar #{node['selenium']['dir']}/#{node['selenium']['jar']} -role hub -port 4444"
+include_recipe 'runit::default'
+
+runit_service 'selenium-hub'
+
+service 'selenium-hub' do
+  supports       :status => true, :restart => true, :reload => true
+  reload_command "#{node['runit']['sv_bin']} hup #{node['runit']['service_dir']}/selenium-hub"
 end
