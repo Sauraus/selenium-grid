@@ -7,5 +7,4 @@
 # All rights reserved - Do Not Redistribute
 #
 
-include_recipe 'selenium-grid::hub'
 include_recipe 'selenium-grid::node'

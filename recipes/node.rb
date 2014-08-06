@@ -8,15 +8,12 @@
 #
 
 include_recipe 'java'
-include_recipe 'git'
 include_recipe 'php'
-
-node.override['selenium-grid']['grid']['hub']['url'] = '33.33.33.10'
 
 #
 # Install packages
 #
-%w(firefox vnc-server).each do |pkg|
+%w(firefox vnc-server unzip).each do |pkg|
   package pkg do
     action :install
   end
@@ -25,7 +22,7 @@ end
 #
 # Install Selenium server
 #
-directory node['selenium']['dir'] do
+directory node['selenium-grid']['dir'] do
     owner 'root'
     group 'root'
     mode 00755
@@ -33,18 +30,18 @@ directory node['selenium']['dir'] do
     action :create
 end
 
-remote_file "#{node['selenium']['dir']}/#{node['selenium']['jar']}" do
+remote_file "#{node['selenium-grid']['dir']}/#{node['selenium-grid']['jar']}" do
     owner 'root'
     group 'root'
     mode 0755
-    source "#{node['selenium']['url']}/#{node['selenium']['jar']}"
+    source "#{node['selenium-grid']['url']}/#{node['selenium-grid']['jar']}"
     action :create_if_missing
 end
 
 #
 # Chromedriver
 #
-remote_file "#{node['selenium']['dir']}/#{node['chromedriver']['zip']}" do
+remote_file "#{node['selenium-grid']['dir']}/#{node['chromedriver']['zip']}" do
     owner 'root'
     group 'root'
     mode 0755
@@ -53,7 +50,7 @@ remote_file "#{node['selenium']['dir']}/#{node['chromedriver']['zip']}" do
 end
 
 execute "unzip" do
-  cwd "#{node['selenium']['dir']}"
+  cwd "#{node['selenium-grid']['dir']}"
   command "unzip -o #{node['chromedriver']['zip']}"
   action :run
 end
@@ -61,13 +58,9 @@ end
 #
 # config
 #
-template "#{node['selenium']['dir']}/#{node['selenium']['config']}.json" do
+template "#{node['selenium-grid']['dir']}/config.json" do
   source "config.json.erb"
   owner 'root'
-  variables({
-    :hub_url => node['grid']['hub']['url'],
-    :node_url => node['grid']['node']['url']
-    })
 end
 
 include_recipe 'runit::default'

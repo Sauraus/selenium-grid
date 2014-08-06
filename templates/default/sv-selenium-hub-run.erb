@@ -1,5 +1,3 @@
 #!/bin/sh
 exec 2>&1
-exec java -jar <%= node['selenium']['dir'] %>/<%= node['selenium']['jar'] %> -role hub -port 4444
-
-##{node['runit']['sv_bin']} hup java -jar #{node['selenium']['dir']}/#{node['selenium']['jar']} -role hub -port 4444
+exec java -jar <%= node['selenium-grid']['dir'] %>/<%= node['selenium-grid']['jar'] %> -role hub -port 4444

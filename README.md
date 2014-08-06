@@ -1,18 +1,16 @@
 selenium-grid Cookbook
 ======================
-This cookbook is for installing and running selenium grd hub and node on an ubuntu vm.
-
-e.g.
-This cookbook makes your favorite breakfast sandwich.
+This cookbook is for installing and running selenium grid hub and node on CentOS.
 
 Requirements
 ------------
 depends          'google-chrome'
-depends          'java', '~> 1.6.0'
-depends          'supervisor'
-depends          'chef_handler'
+depends          'java'
 
+Authors
+------------
+- Author:: Antek Baranski <antek.baranski@gmail.com>
+- Author:: Daniel Anggrianto
 
-License and Authors
--------------------
-Authors: Daniel Anggrianto
+- Copyright:: 2014, Antek Baranski
+- Copyright:: 2014, Daniel Anggrianto
