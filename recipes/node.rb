@@ -18,14 +18,12 @@
 #
 
 include_recipe 'java'
-include_recipe 'php'
 
 %w(firefox vnc-server unzip).each do |pkg|
   package pkg do
     action :install
   end
 end
-
 
 directory node['selenium-grid']['dir'] do
     owner 'root'

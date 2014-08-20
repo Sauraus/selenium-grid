@@ -1,6 +1,10 @@
 selenium-grid CHANGELOG
 =======================
 
+##1.1.0
+* Remove extra quote from config.json.erb template
+* Remove php dependency from the node
+
 ##1.0.0
 * Clean up license
 * Clean up some attributes
