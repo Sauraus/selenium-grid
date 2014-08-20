@@ -55,8 +55,8 @@ execute "unzip" do
   action :run
 end
 
-template "#{node['selenium-grid']['dir']}/config.json" do
-  source "config.json.erb"
+template "#{node['selenium-grid']['dir']}/nodeconfig.json" do
+  source "nodeconfig.json.erb"
   owner 'root'
 end
 

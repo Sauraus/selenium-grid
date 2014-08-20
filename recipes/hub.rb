@@ -35,6 +35,11 @@ remote_file "#{node['selenium-grid']['dir']}/#{node['selenium-grid']['jar']}" do
   action :create_if_missing
 end
 
+template "#{node['selenium-grid']['dir']}/hubconfig.json" do
+  source "hubconfig.json.erb"
+  owner 'root'
+end
+
 include_recipe 'runit::default'
 
 runit_service 'selenium-hub'

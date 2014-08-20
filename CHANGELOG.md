@@ -1,6 +1,9 @@
 selenium-grid CHANGELOG
 =======================
 
+##1.2.0
+* Explicit hub nodeconfig through config file
+
 ##1.1.0
 * Remove extra quote from config.json.erb template
 * Remove php dependency from the node

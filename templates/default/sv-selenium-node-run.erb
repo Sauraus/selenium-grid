@@ -4,4 +4,4 @@
 # will be overwritten on the next chef-client run
 #
 exec 2>&1
-exec java -jar <%= node['selenium-grid']['dir'] %>/<%= node['selenium-grid']['jar'] %> -role node -nodeConfig <%= node['selenium-grid']['dir']%>/config.json -Dwebdriver.chrome.driver=<%= node['selenium-grid']['dir'] %>/<%= node['chromedriver']['exe'] %>
+exec java -jar <%= node['selenium-grid']['dir'] %>/<%= node['selenium-grid']['jar'] %> -role node -nodeConfig <%= node['selenium-grid']['dir']%>/nodeconfig.json -Dwebdriver.chrome.driver=<%= node['selenium-grid']['dir'] %>/<%= node['chromedriver']['exe'] %>
