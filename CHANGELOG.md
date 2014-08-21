@@ -1,6 +1,9 @@
 selenium-grid CHANGELOG
 =======================
 
+##1.3.1
+* Fixup dbus-uuidgen creation
+
 ##1.3.0
 * Install and configure vncserver properly on nodes
 * Upgrade to Selenium 2.42.2

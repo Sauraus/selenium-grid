@@ -42,24 +42,27 @@ end
   end
 end
 
-bash 'Setup dbus-uuidgen' do
+execute 'Setup dbus-uuidgen' do
   command 'dbus-uuidgen > /var/lib/dbus/machine-id'
 end
 
 service "vncserver" do
-  supports :status => true, :restart => true
+  supports :status => true, :restart => true, :stop => true
   action :enable
 end
 
 execute "Stage selenium's password" do
   command "echo \"q1w2e3r4\" > #{Chef::Config[:file_cache_path]}/selenium-vnc"
 end
+
 execute "Stage selenium's password step 2" do
   command "echo \"q1w2e3r4\" >> #{Chef::Config[:file_cache_path]}/selenium-vnc"
 end
+
 execute "Populate selenium's initial VNC password" do
   command "su -l -c \"vncpasswd <#{Chef::Config[:file_cache_path]}/selenium-vnc >/dev/null 2>/dev/null\" selenium"
 end
+
 execute "Remove selenium's staged password" do
   command "rm #{Chef::Config[:file_cache_path]}/selenium-vnc"
 end
