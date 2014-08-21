@@ -1,6 +1,9 @@
 selenium-grid CHANGELOG
 =======================
 
+##1.3.2
+* Install specific firefox version 28
+
 ##1.3.1
 * Fixup dbus-uuidgen creation
 

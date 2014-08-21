@@ -26,3 +26,5 @@ default['chromedriver']['url'] = 'http://chromedriver.storage.googleapis.com'
 default['chromedriver']['version'] = '2.8'
 default['chromedriver']['zip'] = 'chromedriver_linux64.zip'
 default['chromedriver']['exe'] = 'chromedriver'
+
+default['firefox']['version'] = '28.0'

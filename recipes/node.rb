@@ -26,14 +26,15 @@ execute "x11installation" do
   creates "/usr/bin/startx"
 end
 
-# Add internet browsers
-execute "browserinstallation" do
-  if node['platform_version'].to_i >= 6
-    command "yum groupinstall -y 'Internet Browser'"
-  else
-    command "yum groupinstall -y 'Graphical Internet'"
-  end
-  creates "/usr/bin/firefox"
+ark 'firefox' do
+  url "http://ftp.mozilla.org/pub/mozilla.org/firefox/releases/#{node['firefox']['version']}/linux-x86_64/en-US/firefox-#{node['firefox']['version']}.tar.bz2"
+  version node['firefox']['version']
+  has_binaries ['firefox']
+  action :install
+end
+
+magic_shell_environment 'PATH' do
+  value '$PATH:/usr/local/bin'
 end
 
 %w(unzip tigervnc-server xterm twm liberation-mono-fonts dbus).each do |pkg|
