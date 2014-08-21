@@ -1,6 +1,10 @@
 selenium-grid CHANGELOG
 =======================
 
+##1.3.0
+* Install and configure vncserver properly on nodes
+* Upgrade to Selenium 2.42.2
+
 ##1.2.0
 * Explicit hub nodeconfig through config file
 

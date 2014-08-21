@@ -17,4 +17,28 @@
 # limitations under the License.
 #
 
-include_recipe 'selenium-grid::node'
+user node['selenium-grid']['user'] do
+  action :create
+end
+
+group node['selenium-grid']['group'] do
+  members node['selenium-grid']['user']
+  action :create
+end
+
+directory node['selenium-grid']['dir'] do
+  owner node['selenium-grid']['user']
+  group node['selenium-grid']['group']
+  mode 00755
+  recursive true
+  action :create
+end
+
+remote_file "#{node['selenium-grid']['dir']}/#{node['selenium-grid']['jar']}" do
+  source node['selenium-grid']['url']
+  owner node['selenium-grid']['user']
+  group node['selenium-grid']['group']
+  mode 0755
+  action :create
+end
+

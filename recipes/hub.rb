@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: selenium-grid
-# Recipe:: default
+# Recipe:: hub
 #
 # Copyright 2014, Antek Baranski
 #
@@ -17,32 +17,22 @@
 # limitations under the License.
 #
 
+include_recipe 'selenium-grid'
 include_recipe 'java'
-
-directory node['selenium-grid']['dir'] do
-  owner 'root'
-  group 'root'
-  mode 00755
-  recursive true
-  action :create
-end
-
-remote_file "#{node['selenium-grid']['dir']}/#{node['selenium-grid']['jar']}" do
-  source "#{node['selenium-grid']['url']}/#{node['selenium-grid']['jar']}"
-  owner 'root'
-  group 'root'
-  mode 0755
-  action :create_if_missing
-end
 
 template "#{node['selenium-grid']['dir']}/hubconfig.json" do
   source "hubconfig.json.erb"
-  owner 'root'
+  owner node['selenium-grid']['user']
+  group node['selenium-grid']['group']
+  mode 00644
+  action :create
 end
 
 include_recipe 'runit::default'
 
-runit_service 'selenium-hub'
+runit_service 'selenium-hub' do
+  default_logger true
+end
 
 service 'selenium-hub' do
   supports       :status => true, :restart => true, :reload => true

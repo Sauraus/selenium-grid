@@ -4,4 +4,4 @@
 # will be overwritten on the next chef-client run
 #
 exec 2>&1
-exec java -jar <%= node['selenium-grid']['dir'] %>/<%= node['selenium-grid']['jar'] %> -role hub -hubConfig <%= node['selenium-grid']['dir']%>/hubconfig.json
+exec chpst -u <%= node['selenium-grid']['user'] %> java -jar <%= node['selenium-grid']['dir'] %>/<%= node['selenium-grid']['jar'] %> -role hub -hubConfig <%= node['selenium-grid']['dir']%>/hubconfig.json

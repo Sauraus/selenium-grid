@@ -2,7 +2,7 @@
 # Cookbook Name:: selenium-grid
 # Recipe:: node
 #
-# Copyright 2014, Daniel Anggrianto
+# Copyright 2014, Antek Baranski
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,36 +17,73 @@
 # limitations under the License.
 #
 
+include_recipe 'selenium-grid'
 include_recipe 'java'
 
-%w(firefox vnc-server unzip).each do |pkg|
+# Install the X11 package group
+execute "x11installation" do
+  command "yum groupinstall -y 'X Window System'"
+  creates "/usr/bin/startx"
+end
+
+# Add internet browsers
+execute "browserinstallation" do
+  if node['platform_version'].to_i >= 6
+    command "yum groupinstall -y 'Internet Browser'"
+  else
+    command "yum groupinstall -y 'Graphical Internet'"
+  end
+  creates "/usr/bin/firefox"
+end
+
+%w(unzip tigervnc-server xterm twm liberation-mono-fonts dbus).each do |pkg|
   package pkg do
     action :install
   end
 end
 
-directory node['selenium-grid']['dir'] do
-    owner 'root'
-    group 'root'
-    mode 00755
-    recursive true
-    action :create
+bash 'Setup dbus-uuidgen' do
+  command 'dbus-uuidgen > /var/lib/dbus/machine-id'
 end
 
-remote_file "#{node['selenium-grid']['dir']}/#{node['selenium-grid']['jar']}" do
-    owner 'root'
-    group 'root'
-    mode 0755
-    source "#{node['selenium-grid']['url']}/#{node['selenium-grid']['jar']}"
-    action :create_if_missing
+service "vncserver" do
+  supports :status => true, :restart => true
+  action :enable
+end
+
+execute "Stage selenium's password" do
+  command "echo \"q1w2e3r4\" > #{Chef::Config[:file_cache_path]}/selenium-vnc"
+end
+execute "Stage selenium's password step 2" do
+  command "echo \"q1w2e3r4\" >> #{Chef::Config[:file_cache_path]}/selenium-vnc"
+end
+execute "Populate selenium's initial VNC password" do
+  command "su -l -c \"vncpasswd <#{Chef::Config[:file_cache_path]}/selenium-vnc >/dev/null 2>/dev/null\" selenium"
+end
+execute "Remove selenium's staged password" do
+  command "rm #{Chef::Config[:file_cache_path]}/selenium-vnc"
+end
+
+# Create the autostart file
+template "/etc/sysconfig/vncservers" do
+  source "vncservers.erb"
+  notifies :restart, resources(:service => 'vncserver')
+end
+
+template "#{node['selenium-grid']['dir']}/nodeconfig.json" do
+  source "nodeconfig.json.erb"
+  owner node['selenium-grid']['user']
+  group node['selenium-grid']['group']
+  mode 00644
+  action :create
 end
 
 remote_file "#{node['selenium-grid']['dir']}/#{node['chromedriver']['zip']}" do
-    owner 'root'
-    group 'root'
-    mode 0755
-    source "#{node['chromedriver']['url']}/#{node['chromedriver']['version']}/#{node['chromedriver']['zip']}"
-    action :create
+  source "#{node['chromedriver']['url']}/#{node['chromedriver']['version']}/#{node['chromedriver']['zip']}"
+  owner node['selenium-grid']['user']
+  group node['selenium-grid']['group']
+  mode 00644
+  action :create
 end
 
 execute "unzip" do
@@ -55,16 +92,13 @@ execute "unzip" do
   action :run
 end
 
-template "#{node['selenium-grid']['dir']}/nodeconfig.json" do
-  source "nodeconfig.json.erb"
-  owner 'root'
-end
-
 include_recipe 'runit::default'
 
-runit_service 'selenium-node'
+runit_service 'selenium-node' do
+  default_logger true
+end
 
 service 'selenium-node' do
-  supports       :status => true, :restart => true, :reload => true
+  supports :status => true, :restart => true, :reload => true
   reload_command "#{node['runit']['sv_bin']} hup #{node['runit']['service_dir']}/selenium-node"
 end
