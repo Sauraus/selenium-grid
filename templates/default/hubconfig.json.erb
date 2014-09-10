@@ -1,5 +1,5 @@
 {
-    "host": "<%= node['fqdn'] %>",
+    "host": null,
     "port": <%= node['selenium-grid']['hub']['port'] %>,
     "newSessionWaitTimeout": -1,
     "servlets" : [],
@@ -7,10 +7,9 @@
     "capabilityMatcher": "org.openqa.grid.internal.utils.DefaultCapabilityMatcher",
     "throwOnCapabilityNotPresent": true,
     "nodePolling": 5000,
-
     "cleanUpCycle": 5000,
     "timeout": 300000,
     "browserTimeout": 0,
-    "maxSession": 12,
+    "maxSession": 36,
     "jettyMaxThreads":-1
 }

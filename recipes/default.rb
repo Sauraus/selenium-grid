@@ -17,6 +17,9 @@
 # limitations under the License.
 #
 
+include_recipe 'java'
+include_recipe 'runit::default'
+
 user node['selenium-grid']['user'] do
   action :create
 end

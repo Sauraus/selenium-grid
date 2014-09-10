@@ -18,7 +18,7 @@ maintainer_email 'antek.baranski@gmail.com'
 license          'Licensed under the Apache License, Version 2.0'
 description      'Installs and configures a selenium-grid of hub and nodes'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
-version          '1.3.2'
+version          '1.4.0'
 
 depends          'java'
 depends          'runit'

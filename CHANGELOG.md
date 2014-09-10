@@ -1,6 +1,11 @@
 selenium-grid CHANGELOG
 =======================
 
+##1.4.0
+* Config file tuning
+* Cleanup recipes
+* Upgrading to Selenium 2.43.1
+
 ##1.3.2
 * Install specific firefox version 28
 

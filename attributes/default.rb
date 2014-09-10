@@ -18,8 +18,8 @@
 #
 
 default['selenium-grid']['dir'] = '/opt/local/selenium_grid'
-default['selenium-grid']['version']['major'] = '2.42'
-default['selenium-grid']['version']['minor'] = '2'
+default['selenium-grid']['version']['major'] = '2.43'
+default['selenium-grid']['version']['minor'] = '1'
 default['selenium-grid']['jar'] =  "selenium-server-standalone-#{node['selenium-grid']['version']['major']}.#{node['selenium-grid']['version']['minor']}.jar"
 default['selenium-grid']['url'] = "http://selenium-release.storage.googleapis.com/#{node['selenium-grid']['version']['major']}/#{node['selenium-grid']['jar']}"
 default['selenium-grid']['user'] = 'selenium'

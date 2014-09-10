@@ -18,7 +18,11 @@
 #
 
 include_recipe 'selenium-grid'
-include_recipe 'java'
+
+service 'selenium-hub' do
+  supports       :status => true, :restart => true, :reload => false
+  reload_command "#{node['runit']['sv_bin']} hup #{node['runit']['service_dir']}/selenium-hub"
+end
 
 template "#{node['selenium-grid']['dir']}/hubconfig.json" do
   source "hubconfig.json.erb"
@@ -26,15 +30,9 @@ template "#{node['selenium-grid']['dir']}/hubconfig.json" do
   group node['selenium-grid']['group']
   mode 00644
   action :create
+  notifies :restart, resources(:service => 'selenium-hub')
 end
-
-include_recipe 'runit::default'
 
 runit_service 'selenium-hub' do
   default_logger true
-end
-
-service 'selenium-hub' do
-  supports       :status => true, :restart => true, :reload => true
-  reload_command "#{node['runit']['sv_bin']} hup #{node['runit']['service_dir']}/selenium-hub"
 end

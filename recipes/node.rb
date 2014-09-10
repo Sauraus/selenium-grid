@@ -18,7 +18,6 @@
 #
 
 include_recipe 'selenium-grid'
-include_recipe 'java'
 
 # Install the X11 package group
 execute "x11installation" do
@@ -74,12 +73,18 @@ template "/etc/sysconfig/vncservers" do
   notifies :restart, resources(:service => 'vncserver')
 end
 
+service 'selenium-node' do
+  supports :status => true, :restart => true, :reload => true
+  reload_command "#{node['runit']['sv_bin']} hup #{node['runit']['service_dir']}/selenium-node"
+end
+
 template "#{node['selenium-grid']['dir']}/nodeconfig.json" do
   source "nodeconfig.json.erb"
   owner node['selenium-grid']['user']
   group node['selenium-grid']['group']
   mode 00644
   action :create
+  notifies :restart, resources(:service => 'selenium-node')
 end
 
 remote_file "#{node['selenium-grid']['dir']}/#{node['chromedriver']['zip']}" do
@@ -88,6 +93,7 @@ remote_file "#{node['selenium-grid']['dir']}/#{node['chromedriver']['zip']}" do
   group node['selenium-grid']['group']
   mode 00644
   action :create
+  notifies :restart, resources(:service => 'selenium-node')
 end
 
 execute "unzip" do
@@ -96,13 +102,6 @@ execute "unzip" do
   action :run
 end
 
-include_recipe 'runit::default'
-
 runit_service 'selenium-node' do
   default_logger true
-end
-
-service 'selenium-node' do
-  supports :status => true, :restart => true, :reload => true
-  reload_command "#{node['runit']['sv_bin']} hup #{node['runit']['service_dir']}/selenium-node"
 end
